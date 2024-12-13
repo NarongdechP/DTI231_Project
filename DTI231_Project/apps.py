@@ -1,4 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, render_template,request
+from flask_wtf import FlaskForm
+from wtforms import TextField,SubmitField
 app = Flask(__name__)
 
 @app.route('/')
@@ -21,6 +23,7 @@ def sign_in():
 @app.route('/sign_up')
 def sign_up():
     return render_template("Sign up.html")
+
 
 if __name__ == '__main__':
     app.run(debug=True)

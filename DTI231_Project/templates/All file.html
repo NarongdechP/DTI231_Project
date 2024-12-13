@@ -371,7 +371,7 @@
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td class="file-name" data-index="${index}">
-                            <img src="${item.type === 'folder' ? '../folder-icon.png' : '../file-icon.png'}" alt="${item.type} Icon">
+                            <img src="${item.type === 'folder' ? 'folder-icon.png' : 'file-icon.png'}" alt="${item.type} Icon">
                             ${item.name}
                         </td>
                         <td>${item.modified}</td>
