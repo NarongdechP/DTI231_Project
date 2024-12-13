@@ -35,10 +35,10 @@ def load_user(user_id):
 # หน้า Home
 @app.route('/')
 def home():
-    return render_template('home.html')
+    return render_template("Home.html")
 
 # หน้า Sign In
-@app.route('/sign-in', methods=['GET', 'POST'])
+@app.route('/sign_in', methods=['GET', 'POST'])
 def sign_in():
     if request.method == 'POST':
         username = request.form['username']
@@ -53,10 +53,10 @@ def sign_in():
         else:
             flash('Invalid username or password', 'danger')  # แจ้งเตือนหากข้อมูลไม่ถูกต้อง
     
-    return render_template('sign_in.html')
+    return render_template("Sign in.html")
 
 # หน้า Sign Up
-@app.route('/sign-up', methods=['GET', 'POST'])
+@app.route('/sign_up', methods=['GET', 'POST'])
 def sign_up():
     if request.method == 'POST':
         username = request.form['username']
@@ -78,13 +78,13 @@ def sign_up():
         flash('Account created successfully. You can now sign in.', 'success')
         return redirect(url_for('sign_in'))
     
-    return render_template('sign_up.html')
+    return render_template('Sign up.html')
 
 # หน้า Profile
 @app.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html', username=current_user.username, email=current_user.email)
+    return render_template('Profile.html', username=current_user.username, email=current_user.email)
 
 if __name__ == '__main__':
     with app.app_context():
