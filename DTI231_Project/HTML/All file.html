@@ -3,9 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File</title>
-    <link rel="stylesheet" href="style1.css"> <!-- เชื่อมต่อกับไฟล์ CSS ของคุณ -->
-    <link rel="stylesheet" href="style Login.css">  <!-- เชื่อมต่อกับไฟล์ CSS สำหรับหน้า Login -->
+    <title>All Files</title>
+    <link rel="stylesheet" href="style.css"> <!-- เชื่อมต่อกับไฟล์ CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        nav {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+        }
+
+        nav .menu {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .menu ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        nav .menu ul li {
+            margin: 0 15px;
+        }
+
+        nav .menu ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+        }
+
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #f0f0f0;
+        }
+
+        .file-name {
+            display: flex;
+            align-items: center;
+        }
+
+        .file-name img {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn.delete {
+            background-color: #f44336;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+    </style>
 </head>
 <body>
     <nav>
@@ -15,74 +100,60 @@
             </div>
             <ul>
                 <li><a href="#">Home</a></li>
-                <!--<li><a href="#">Upload</a></li>-->
                 <li><a href="#">File</a></li>
                 <li><a href="#">Profile</a></li>
             </ul>
         </div>
     </nav>
 
-    <div class="wrapper">
-        <div class="container">
-            <div class="col-left">
-                <div class="login-text">
-                    <h2>All Files</h2>
-                    <p>View all the files you have uploaded.</p>
-                </div>
-            </div>
+    <div class="container">
+        <h1>All Files</h1>
+        <p>View and manage your uploaded files.</p>
 
-            <div class="col-right">
-                <!-- เริ่มต้นแสดงรายการไฟล์ที่ผู้ใช้ได้อัปโหลด -->
-                <div class="file-list">
-                    <div class="file-item">
-                        <img src="file-icon.png" alt="File Icon" class="file-icon">
-                        <div class="file-details">
-                            <p class="file-name">Document1.pdf</p>
-                            <p class="file-size">15 MB</p>
-                            <p class="file-date">Uploaded: 2024-12-13</p>
-                        </div>
-                        <div class="file-actions">
-                            <button class="btn">Download</button>
-                            <button class="btn">Delete</button>
-                        </div>
-                    </div>
-
-                    <div class="file-item">
-                        <img src="file-icon.png" alt="File Icon" class="file-icon">
-                        <div class="file-details">
-                            <p class="file-name">Image1.jpg</p>
-                            <p class="file-size">5 MB</p>
-                            <p class="file-date">Uploaded: 2024-12-12</p>
-                        </div>
-                        <div class="file-actions">
-                            <button class="btn">Download</button>
-                            <button class="btn">Delete</button>
-                        </div>
-                    </div>
-
-                    <!-- เพิ่มรายการไฟล์อื่นๆ ได้ที่นี่ -->
-                </div>
-            </div>
-        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Modified</th>
+                    <th>Modified By</th>
+                    <th>File Size</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="file-name"><img src="file-icon.png" alt="File Icon"> OfficeMobile</td>
+                    <td>4 ธันวาคม</td>
+                    <td>narongdech pholnam</td>
+                    <td>0 items</td>
+                    <td>
+                        <button class="btn">Open</button>
+                        <button class="btn delete">Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="file-name"><img src="file-icon.png" alt="File Icon"> Transcribed Files</td>
+                    <td>30 พฤศจิกายน</td>
+                    <td>narongdech pholnam</td>
+                    <td>1 items</td>
+                    <td>
+                        <button class="btn">Open</button>
+                        <button class="btn delete">Delete</button>
+                    </td>
+                </tr>
+                <!-- เพิ่มไฟล์เพิ่มเติมตามความต้องการ -->
+            </tbody>
+        </table>
     </div>
 
     <script>
-        // เพิ่ม JavaScript สำหรับจัดการการดาวน์โหลดและลบไฟล์
-        const downloadButtons = document.querySelectorAll('.file-actions .btn');
-
-        downloadButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                alert('Downloading file...');
-                // เพิ่มฟังก์ชันสำหรับดาวน์โหลดไฟล์จริง ๆ ที่นี่
-            });
-        });
-
-        const deleteButtons = document.querySelectorAll('.file-actions .btn');
+        const deleteButtons = document.querySelectorAll('.btn.delete');
 
         deleteButtons.forEach(button => {
             button.addEventListener('click', function() {
-                alert('File deleted');
-                // เพิ่มฟังก์ชันสำหรับลบไฟล์จริง ๆ ที่นี่
+                const row = this.closest('tr');
+                row.remove();
+                alert('File deleted successfully!');
             });
         });
     </script>
