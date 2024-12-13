@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,7 +17,10 @@
                 <a href="#">NachDaTee</a>
             </div>
             <ul>
-                <!-- เมนูที่ปิดการใช้งานไว้ -->
+                <!--<li><a href="index.html">HOME</a></li>
+                <li><a href="signIN.html">LOGIN</a></li>
+                <li><a href="booking.html">BOOKINGS</a></li>
+                <li><a href="feedback.html">Feedback</a></li>-->
             </ul>
         </div>
     </nav>
@@ -33,79 +37,47 @@
             <div class="col-right">
                 <div class="login-form">
                     <h2>Login</h2>
-                    <form id="loginForm">
+                    <!-- Form with action to handle login and redirect -->
+                    <form action="All file.html" method="POST" onsubmit="return handleLogin()">
                         <p>
-                            <label>Username/Email address<span>*</span></label>
-                            <input type="text" 
-                                   id="username" 
-                                   name="username" 
-                                   placeholder="Username or Email" 
-                                   pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|[a-zA-Z0-9_]+" 
-                                   title="กรอกอีเมลหรือชื่อผู้ใช้ที่ถูกต้อง" 
-                                   required>
+                            <label>Username/Email address<span></span></label>
+                            <input type="text" id="username" placeholder="Username or Email" required>
                         </p>
                         <p>
-                            <label>Password<span>*</span></label>
-                            <input type="password" 
-                                   id="password" 
-                                   name="password" 
-                                   placeholder="Password" 
-                                   required>
-                        </p>
-                        <p>
-                            <label>
-                                <input type="checkbox" name="remember"> จดจำฉันไว้
-                            </label>
+                            <label>Password<span></span></label>
+                            <input type="password" id="password" placeholder="Password" required>
                         </p>
                         <p>
                             <input type="submit" value="Sign In">
                         </p>
+                        <p>
+                            <!--<a href="">Forgot password?</a>-->
+                        </p>
                     </form>
                 </div>
             </div>
+
         </div>
     </div>
 
     <script>
-    document.getElementById('loginForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // หยุดการส่งฟอร์มแบบปกติ
+        // JavaScript to handle form submission and redirect
+        function handleLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
 
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-        const remember = document.querySelector('input[name="remember"]').checked;
-
-        // ตรวจสอบข้อมูลเบื้องต้น
-        if (!username || !password) {
-            alert('กรุณากรอกชื่อผู้ใช้และรหัสผ่าน');
-            return;
-        }
-
-        // จำลองการส่งข้อมูลไปยัง backend คุณต้องแทนที่ด้วย URL backend จริง
-        fetch('https://yourbackend.com/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ 
-                username,
-                password,
-                remember
-            })
-        })
-        .then(response => {
-            if (response.ok) {
-                // หากล็อกอินสำเร็จ ให้ไปหน้า Home
-                window.location.href = 'All file.html';
+            // Example logic to check if username and password are not empty
+            if (username && password) {
+                // Proceed with the form submission to redirect to Home.html
+                return true; // Submit form
             } else {
-                // กรณีล็อกอินไม่สำเร็จ
-                alert('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+                // Prevent form submission if username/password are not filled
+                alert('Please fill in both username and password.');
+                return false;
             }
-        })
-        .catch(error => {
-            console.error('เกิดข้อผิดพลาด:', error);
-            alert('เกิดข้อผิดพลาดในการเข้าสู่ระบบ');
-        });
-    });
+        }
     </script>
+
 </body>
+
 </html>
