@@ -52,7 +52,7 @@ class UserRegistrationForm(FlaskForm):
             raise ValidationError(f"The username {username.data} is already taken.")
 
 # หน้า Sign Up
-@app.route('/sign-up', methods=['GET', 'POST'])
+@app.route('/sign_up', methods=['GET', 'POST'])
 def sign_up():
     form = UserRegistrationForm()
 
@@ -72,7 +72,7 @@ def sign_up():
     return render_template('sign_up.html', form=form)
 
 # หน้า Sign In (จำลองไว้สำหรับทดสอบ)
-@app.route('/sign-in', methods=['GET', 'POST'])
+@app.route('/sign_in', methods=['GET', 'POST'])
 def sign_in():
     if request.method == 'POST':
         # รหัสผ่านและชื่อผู้ใช้จะถูกตรวจสอบที่นี่
