@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Files</title>
+    <title>File Management</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -45,6 +45,22 @@
             padding: 20px;
         }
 
+        .breadcrumb {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .breadcrumb a {
+            color: #333;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
         .add-new-btn {
             background-color: #4CAF50;
             color: white;
@@ -58,10 +74,6 @@
 
         .add-new-btn:hover {
             opacity: 0.9;
-        }
-
-        .add-new-btn i {
-            margin-right: 5px;
         }
 
         table {
@@ -84,6 +96,7 @@
         .file-name {
             display: flex;
             align-items: center;
+            cursor: pointer;
         }
 
         .file-name img {
@@ -99,10 +112,15 @@
             padding: 5px 10px;
             cursor: pointer;
             font-size: 14px;
+            margin-right: 5px;
         }
 
         .btn.delete {
             background-color: #f44336;
+        }
+
+        .btn.move {
+            background-color: #2196F3;
         }
 
         .btn:hover {
@@ -132,14 +150,6 @@
             border-radius: 5px;
         }
 
-        .popup-content input, 
-        .popup-content button {
-            margin: 10px 0;
-            padding: 8px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
         .close-popup {
             color: #aaa;
             float: right;
@@ -151,6 +161,10 @@
         .close-popup:hover {
             color: black;
         }
+
+        .move-checkbox {
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -160,16 +174,18 @@
                 <!--<a href="#">NachDaTee</a>-->
             </div>
             <ul>
-                <!--<li><a href="Home.html">Home</a></li>
-                <li><a href="#">File</a></li>-->
+                <li><a href="#">File</a></li>
                 <li><a href="Profile.html">Profile</a></li>
             </ul>
         </div>
     </nav>
 
     <div class="container">
-        <h1>All Files</h1>
-        <p>View and manage your uploaded files.</p>
+        <div class="breadcrumb" id="breadcrumb">
+            <a href="#" id="rootLink">Files</a>
+        </div>
+
+        <h1 id="currentFolderTitle">All Files</h1>
 
         <!-- Add New Button -->
         <button id="addNewBtn" class="add-new-btn">+ Add New</button>
@@ -185,6 +201,7 @@
                 </tr>
             </thead>
             <tbody id="fileList">
+                <!-- Initial folders and files will be dynamically added here -->
             </tbody>
         </table>
     </div>
@@ -216,139 +233,238 @@
         <div class="popup-content">
             <span class="close-popup">&times;</span>
             <h2>Upload File</h2>
-            <input type="file" id="fileInput">
+            <input type="file" id="fileInput" multiple>
             <button id="confirmUploadFile">Upload</button>
         </div>
     </div>
 
+    <!-- Move File Popup -->
+    <div id="moveFilePopup" class="popup">
+        <div class="popup-content">
+            <span class="close-popup">&times;</span>
+            <h2>Move Files</h2>
+            <div id="moveFileList"></div>
+            <button id="confirmMoveFiles">Move</button>
+        </div>
+    </div>
+
     <script>
-        // Add New Button Popup
-        const addNewBtn = document.getElementById('addNewBtn');
-        const addNewPopup = document.getElementById('addNewPopup');
-        const createFolderBtn = document.getElementById('createFolderBtn');
-        const uploadFileBtn = document.getElementById('uploadFileBtn');
-        const createFolderPopup = document.getElementById('createFolderPopup');
-        const uploadFilePopup = document.getElementById('uploadFilePopup');
-        
-        // Close popup buttons
-        const closePopupButtons = document.querySelectorAll('.close-popup');
-        
-        // Create Folder Elements
-        const folderNameInput = document.getElementById('folderNameInput');
-        const confirmCreateFolder = document.getElementById('confirmCreateFolder');
-        
-        // Upload File Elements
-        const fileInput = document.getElementById('fileInput');
-        const confirmUploadFile = document.getElementById('confirmUploadFile');
-        
-        // Delete Buttons
-        const deleteButtons = document.querySelectorAll('.btn.delete');
+        // File and Folder Management System
+        class FileManager {
+            constructor() {
+                this.fileList = document.getElementById('fileList');
+                this.breadcrumb = document.getElementById('breadcrumb');
+                this.currentFolderTitle = document.getElementById('currentFolderTitle');
+                this.currentPath = [];
+                this.files = {
+                    root: [
+                    ]
+                };
 
-        // Show Add New Popup
-        addNewBtn.addEventListener('click', () => {
-            addNewPopup.style.display = 'block';
-        });
-
-        // Show Create Folder Popup
-        createFolderBtn.addEventListener('click', () => {
-            addNewPopup.style.display = 'none';
-            createFolderPopup.style.display = 'block';
-        });
-
-        // Show Upload File Popup
-        uploadFileBtn.addEventListener('click', () => {
-            addNewPopup.style.display = 'none';
-            uploadFilePopup.style.display = 'block';
-        });
-
-        // Close Popups
-        closePopupButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                addNewPopup.style.display = 'none';
-                createFolderPopup.style.display = 'none';
-                uploadFilePopup.style.display = 'none';
-            });
-        });
-
-        // Create Folder Functionality
-        confirmCreateFolder.addEventListener('click', () => {
-            const folderName = folderNameInput.value.trim();
-            if (folderName) {
-                const fileList = document.getElementById('fileList');
-                const newRow = document.createElement('tr');
-                newRow.innerHTML = `
-                    <td class="file-name">
-                        <img src="folder-icon.png" alt="File Icon"> ${folderName}
-                    </td>
-                    <td>${new Date().toLocaleDateString()}</td>
-                    <td>narongdech pholnam</td>
-                    <td>0 items</td>
-                    <td>
-                        <button class="btn">Open</button>
-                        <button class="btn delete">Delete</button>
-                    </td>
-                `;
-                fileList.appendChild(newRow);
-                
-                // Reset and close popup
-                folderNameInput.value = '';
-                createFolderPopup.style.display = 'none';
-
-                // Reattach delete event to new button
-                const newDeleteButton = newRow.querySelector('.btn.delete');
-                newDeleteButton.addEventListener('click', function() {
-                    const row = this.closest('tr');
-                    row.remove();
-                    alert('File deleted successfully!');
-                });
-            } else {
-                alert('Please enter a folder name');
+                this.initEventListeners();
+                this.renderFiles();
             }
-        });
 
-        // Upload File Functionality
-        confirmUploadFile.addEventListener('click', () => {
-            const file = fileInput.files[0];
-            if (file) {
-                const fileList = document.getElementById('fileList');
-                const newRow = document.createElement('tr');
-                newRow.innerHTML = `
-                    <td class="file-name">
-                        <img src="file-icon.png" alt="File Icon"> ${file.name}
-                    </td>
-                    <td>${new Date().toLocaleDateString()}</td>
-                    <td>narongdech pholnam</td>
-                    <td>${(file.size / 1024).toFixed(2)} KB</td>
-                    <td>
-                        <button class="btn">Open</button>
-                        <button class="btn delete">Delete</button>
-                    </td>
-                `;
-                fileList.appendChild(newRow);
-                
-                // Reset and close popup
-                fileInput.value = '';
-                uploadFilePopup.style.display = 'none';
-
-                // Reattach delete event to new button
-                const newDeleteButton = newRow.querySelector('.btn.delete');
-                newDeleteButton.addEventListener('click', function() {
-                    const row = this.closest('tr');
-                    row.remove();
-                    alert('File deleted successfully!');
+            initEventListeners() {
+                // Add New Button Events
+                document.getElementById('addNewBtn').addEventListener('click', () => {
+                    document.getElementById('addNewPopup').style.display = 'block';
                 });
-            } else {
-                alert('Please select a file to upload');
-            }
-        });
 
-        // Original Delete Functionality
-        deleteButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const row = this.closest('tr');
-                row.remove();
-                alert('File deleted successfully!');
-            });
+                // Create Folder Events
+                document.getElementById('createFolderBtn').addEventListener('click', () => {
+                    document.getElementById('addNewPopup').style.display = 'none';
+                    document.getElementById('createFolderPopup').style.display = 'block';
+                });
+
+                document.getElementById('confirmCreateFolder').addEventListener('click', () => {
+                    const folderName = document.getElementById('folderNameInput').value.trim();
+                    if (folderName) {
+                        this.createFolder(folderName);
+                        document.getElementById('folderNameInput').value = '';
+                        document.getElementById('createFolderPopup').style.display = 'none';
+                    }
+                });
+
+                // Upload File Events
+                document.getElementById('uploadFileBtn').addEventListener('click', () => {
+                    document.getElementById('addNewPopup').style.display = 'none';
+                    document.getElementById('uploadFilePopup').style.display = 'block';
+                });
+
+                document.getElementById('confirmUploadFile').addEventListener('click', () => {
+                    const files = document.getElementById('fileInput').files;
+                    if (files.length > 0) {
+                        this.uploadFiles(files);
+                        document.getElementById('fileInput').value = '';
+                        document.getElementById('uploadFilePopup').style.display = 'none';
+                    }
+                });
+
+                // Close Popup Events
+                document.querySelectorAll('.close-popup').forEach(button => {
+                    button.addEventListener('click', () => {
+                        document.querySelectorAll('.popup').forEach(popup => {
+                            popup.style.display = 'none';
+                        });
+                    });
+                });
+
+                // Root Link
+                document.getElementById('rootLink').addEventListener('click', () => {
+                    this.currentPath = [];
+                    this.renderFiles();
+                });
+            }
+
+            getCurrentFolder() {
+                let currentFolder = this.files.root;
+                for (let folder of this.currentPath) {
+                    if (!currentFolder[folder].children) {
+                        currentFolder[folder].children = [];
+                    }
+                    currentFolder = currentFolder[folder].children;
+                }
+                return currentFolder;
+            }
+
+            createFolder(name) {
+                const currentFolder = this.getCurrentFolder();
+                currentFolder.push({
+                    type: 'folder',
+                    name: name,
+                    modified: new Date().toLocaleDateString(),
+                    modifiedBy: 'narongdech pholnam',
+                    children: []
+                });
+                this.renderFiles();
+            }
+
+            uploadFiles(files) {
+                const currentFolder = this.getCurrentFolder();
+                Array.from(files).forEach(file => {
+                    currentFolder.push({
+                        type: 'file',
+                        name: file.name,
+                        size: `${(file.size / 1024).toFixed(2)} KB`,
+                        modified: new Date().toLocaleDateString(),
+                        modifiedBy: 'narongdech pholnam'
+                    });
+                });
+                this.renderFiles();
+            }
+
+            renderFiles() {
+                this.fileList.innerHTML = '';
+                let currentFolder = this.files.root;
+
+                // Navigate to current path
+                for (let folderIndex of this.currentPath) {
+                    currentFolder = currentFolder[folderIndex].children;
+                }
+
+                // Update breadcrumb
+                this.updateBreadcrumb();
+
+                // Render files and folders
+                currentFolder.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="file-name" data-index="${index}">
+                            <img src="${item.type === 'folder' ? 'folder-icon.png' : 'file-icon.png'}" alt="${item.type} Icon">
+                            ${item.name}
+                        </td>
+                        <td>${item.modified}</td>
+                        <td>${item.modifiedBy}</td>
+                        <td>${item.size || (item.type === 'folder' ? '0 items' : '')}</td>
+                        <td>
+                            ${item.type === 'folder' ? '<button class="btn">Open</button>' : ''}
+                            <button class="btn move">Move</button>
+                            <button class="btn delete">Delete</button>
+                        </td>
+                    `;
+
+                    // Folder navigation
+                    const fileNameCell = row.querySelector('.file-name');
+                    if (item.type === 'folder') {
+                        fileNameCell.addEventListener('click', () => {
+                            this.currentPath.push(index);
+                            this.renderFiles();
+                        });
+                    }
+
+                    // Move file/folder button
+                    const moveButton = row.querySelector('.btn.move');
+                    moveButton.addEventListener('click', () => this.showMoveDialog(index));
+
+                    // Delete file/folder button
+                    const deleteButton = row.querySelector('.btn.delete');
+                    deleteButton.addEventListener('click', () => this.deleteItem(index));
+
+                    this.fileList.appendChild(row);
+                });
+            }
+
+            updateBreadcrumb() {
+                // Clear existing breadcrumb
+                const rootLink = document.getElementById('rootLink');
+                while (this.breadcrumb.children.length > 1) {
+                    this.breadcrumb.removeChild(this.breadcrumb.lastChild);
+                }
+
+                // Add breadcrumb items for current path
+                this.currentPath.forEach((folderIndex, pathIndex) => {
+                    const folderName = this.files.root[folderIndex].name;
+                    const breadcrumbLink = document.createElement('a');
+                    breadcrumbLink.href = '#';
+                    breadcrumbLink.textContent = folderName;
+                    breadcrumbLink.addEventListener('click', () => {
+                        // Trim the path to this point
+                        this.currentPath = this.currentPath.slice(0, pathIndex + 1);
+                        this.renderFiles();
+                    });
+                    this.breadcrumb.appendChild(breadcrumbLink);
+                });
+            }
+
+            showMoveDialog(index) {
+                const moveFileList = document.getElementById('moveFileList');
+                moveFileList.innerHTML = '';
+
+                const currentFolder = this.getCurrentFolder();
+                const itemToMove = currentFolder[index];
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = true;
+                checkbox.disabled = true;
+                checkbox.className = 'move-checkbox';
+
+                const label = document.createElement('label');
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(itemToMove.name));
+
+                moveFileList.appendChild(label);
+
+                document.getElementById('moveFilePopup').style.display = 'block';
+                
+                document.getElementById('confirmMoveFiles').onclick = () => {
+                    // In a real implementation, you'd show a folder selection dialog
+                    alert('Moved to another location');
+                    document.getElementById('moveFilePopup').style.display = 'none';
+                };
+            }
+
+            deleteItem(index) {
+                const currentFolder = this.getCurrentFolder();
+                currentFolder.splice(index, 1);
+                this.renderFiles();
+            }
+        }
+
+        // Initialize File Manager
+        document.addEventListener('DOMContentLoaded', () => {
+            new FileManager();
         });
     </script>
 </body>
