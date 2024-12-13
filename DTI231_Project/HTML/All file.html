@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Files</title>
+    <link rel="stylesheet" href="style1.css"> <!-- เชื่อมต่อกับไฟล์ CSS ของคุณ -->
+    <link rel="stylesheet" href="Login.css">  <!-- เชื่อมต่อกับไฟล์ CSS สำหรับหน้า Login -->
+</head>
+<body>
+    <nav>
+        <div class="menu">
+            <div class="logo">
+                <a href="#">NachDaTee</a>
+            </div>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Upload</a></li>
+                <li><a href="#">All Files</a></li>
+                <li><a href="#">Profile</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="wrapper">
+        <div class="container">
+            <div class="col-left">
+                <div class="login-text">
+                    <h2>All Files</h2>
+                    <p>View all the files you have uploaded.</p>
+                </div>
+            </div>
+
+            <div class="col-right">
+                <!-- เริ่มต้นแสดงรายการไฟล์ที่ผู้ใช้ได้อัปโหลด -->
+                <div class="file-list">
+                    <div class="file-item">
+                        <img src="file-icon.png" alt="File Icon" class="file-icon">
+                        <div class="file-details">
+                            <p class="file-name">Document1.pdf</p>
+                            <p class="file-size">15 MB</p>
+                            <p class="file-date">Uploaded: 2024-12-13</p>
+                        </div>
+                        <div class="file-actions">
+                            <button class="btn">Download</button>
+                            <button class="btn">Delete</button>
+                        </div>
+                    </div>
+
+                    <div class="file-item">
+                        <img src="file-icon.png" alt="File Icon" class="file-icon">
+                        <div class="file-details">
+                            <p class="file-name">Image1.jpg</p>
+                            <p class="file-size">5 MB</p>
+                            <p class="file-date">Uploaded: 2024-12-12</p>
+                        </div>
+                        <div class="file-actions">
+                            <button class="btn">Download</button>
+                            <button class="btn">Delete</button>
+                        </div>
+                    </div>
+
+                    <!-- เพิ่มรายการไฟล์อื่นๆ ได้ที่นี่ -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // เพิ่ม JavaScript สำหรับจัดการการดาวน์โหลดและลบไฟล์
+        const downloadButtons = document.querySelectorAll('.file-actions .btn');
+
+        downloadButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                alert('Downloading file...');
+                // เพิ่มฟังก์ชันสำหรับดาวน์โหลดไฟล์จริง ๆ ที่นี่
+            });
+        });
+
+        const deleteButtons = document.querySelectorAll('.file-actions .btn');
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                alert('File deleted');
+                // เพิ่มฟังก์ชันสำหรับลบไฟล์จริง ๆ ที่นี่
+            });
+        });
+    </script>
+</body>
+</html>
