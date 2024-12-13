@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Files</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        nav {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+        }
+
+        nav .menu {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .menu ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        nav .menu ul li {
+            margin: 0 15px;
+        }
+
+        nav .menu ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .add-new-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .add-new-btn:hover {
+            opacity: 0.9;
+        }
+
+        .add-new-btn i {
+            margin-right: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+        }
+
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #f0f0f0;
+        }
+
+        .file-name {
+            display: flex;
+            align-items: center;
+        }
+
+        .file-name img {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn.delete {
+            background-color: #f44336;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Popup styles */
+        .popup {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .popup-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 5px;
+        }
+
+        .popup-content input, 
+        .popup-content button {
+            margin: 10px 0;
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .close-popup {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-popup:hover {
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="menu">
+            <div class="logo">
+                <a href="#">NachDaTee</a>
+            </div>
+            <ul>
+                <li><a href="Home.html">Home</a></li>
+                <li><a href="#">File</a></li>
+                <li><a href="#">Profile</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>All Files</h1>
+        <p>View and manage your uploaded files.</p>
+
+        <!-- Add New Button -->
+        <button id="addNewBtn" class="add-new-btn">+ Add New</button>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Modified</th>
+                    <th>Modified By</th>
+                    <th>File Size</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="fileList">
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add New Popup -->
+    <div id="addNewPopup" class="popup">
+        <div class="popup-content">
+            <span class="close-popup">&times;</span>
+            <h2>Add New</h2>
+            <div>
+                <button id="createFolderBtn">Create New Folder</button>
+                <button id="uploadFileBtn">Upload File</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Folder Popup -->
+    <div id="createFolderPopup" class="popup">
+        <div class="popup-content">
+            <span class="close-popup">&times;</span>
+            <h2>Create New Folder</h2>
+            <input type="text" id="folderNameInput" placeholder="Enter folder name">
+            <button id="confirmCreateFolder">Create</button>
+        </div>
+    </div>
+
+    <!-- Upload File Popup -->
+    <div id="uploadFilePopup" class="popup">
+        <div class="popup-content">
+            <span class="close-popup">&times;</span>
+            <h2>Upload File</h2>
+            <input type="file" id="fileInput">
+            <button id="confirmUploadFile">Upload</button>
+        </div>
+    </div>
+
+    <script>
+        // Add New Button Popup
+        const addNewBtn = document.getElementById('addNewBtn');
+        const addNewPopup = document.getElementById('addNewPopup');
+        const createFolderBtn = document.getElementById('createFolderBtn');
+        const uploadFileBtn = document.getElementById('uploadFileBtn');
+        const createFolderPopup = document.getElementById('createFolderPopup');
+        const uploadFilePopup = document.getElementById('uploadFilePopup');
+        
+        // Close popup buttons
+        const closePopupButtons = document.querySelectorAll('.close-popup');
+        
+        // Create Folder Elements
+        const folderNameInput = document.getElementById('folderNameInput');
+        const confirmCreateFolder = document.getElementById('confirmCreateFolder');
+        
+        // Upload File Elements
+        const fileInput = document.getElementById('fileInput');
+        const confirmUploadFile = document.getElementById('confirmUploadFile');
+        
+        // Delete Buttons
+        const deleteButtons = document.querySelectorAll('.btn.delete');
+
+        // Show Add New Popup
+        addNewBtn.addEventListener('click', () => {
+            addNewPopup.style.display = 'block';
+        });
+
+        // Show Create Folder Popup
+        createFolderBtn.addEventListener('click', () => {
+            addNewPopup.style.display = 'none';
+            createFolderPopup.style.display = 'block';
+        });
+
+        // Show Upload File Popup
+        uploadFileBtn.addEventListener('click', () => {
+            addNewPopup.style.display = 'none';
+            uploadFilePopup.style.display = 'block';
+        });
+
+        // Close Popups
+        closePopupButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                addNewPopup.style.display = 'none';
+                createFolderPopup.style.display = 'none';
+                uploadFilePopup.style.display = 'none';
+            });
+        });
+
+        // Create Folder Functionality
+        confirmCreateFolder.addEventListener('click', () => {
+            const folderName = folderNameInput.value.trim();
+            if (folderName) {
+                const fileList = document.getElementById('fileList');
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td class="file-name">
+                        <img src="folder-icon.png" alt="File Icon"> ${folderName}
+                    </td>
+                    <td>${new Date().toLocaleDateString()}</td>
+                    <td>narongdech pholnam</td>
+                    <td>0 items</td>
+                    <td>
+                        <button class="btn">Open</button>
+                        <button class="btn delete">Delete</button>
+                    </td>
+                `;
+                fileList.appendChild(newRow);
+                
+                // Reset and close popup
+                folderNameInput.value = '';
+                createFolderPopup.style.display = 'none';
+
+                // Reattach delete event to new button
+                const newDeleteButton = newRow.querySelector('.btn.delete');
+                newDeleteButton.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    row.remove();
+                    alert('File deleted successfully!');
+                });
+            } else {
+                alert('Please enter a folder name');
+            }
+        });
+
+        // Upload File Functionality
+        confirmUploadFile.addEventListener('click', () => {
+            const file = fileInput.files[0];
+            if (file) {
+                const fileList = document.getElementById('fileList');
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td class="file-name">
+                        <img src="file-icon.png" alt="File Icon"> ${file.name}
+                    </td>
+                    <td>${new Date().toLocaleDateString()}</td>
+                    <td>narongdech pholnam</td>
+                    <td>${(file.size / 1024).toFixed(2)} KB</td>
+                    <td>
+                        <button class="btn">Open</button>
+                        <button class="btn delete">Delete</button>
+                    </td>
+                `;
+                fileList.appendChild(newRow);
+                
+                // Reset and close popup
+                fileInput.value = '';
+                uploadFilePopup.style.display = 'none';
+
+                // Reattach delete event to new button
+                const newDeleteButton = newRow.querySelector('.btn.delete');
+                newDeleteButton.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    row.remove();
+                    alert('File deleted successfully!');
+                });
+            } else {
+                alert('Please select a file to upload');
+            }
+        });
+
+        // Original Delete Functionality
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                row.remove();
+                alert('File deleted successfully!');
+            });
+        });
+    </script>
+</body>
+</html>
